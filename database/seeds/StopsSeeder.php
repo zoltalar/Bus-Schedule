@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\BusStop;
+use App\Models\Stop;
 use Goutte\Client;
 use Illuminate\Database\Seeder;
 
-class BusStopsSeeder extends Seeder
+class StopsSeeder extends Seeder
 {
     /**
      * URL containing list of bus stops.
@@ -34,7 +34,7 @@ class BusStopsSeeder extends Seeder
                 $uid = trim($args['przystanek']);
                 $name = trim($node->text());
                 
-                BusStop::firstOrCreate([
+                Stop::firstOrCreate([
                     'uid' => $uid,
                     'name' => $name
                 ]);

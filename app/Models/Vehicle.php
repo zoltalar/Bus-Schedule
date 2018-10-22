@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-final class BusStop extends Base
+class Vehicle 
 {
-    protected $table = 'bus_stops';
+    protected $table = 'vehicles';
     
     protected $guarded = ['id'];
 }
