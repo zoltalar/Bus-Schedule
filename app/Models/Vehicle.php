@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class Vehicle 
+final class Vehicle extends Base
 {
     protected $table = 'vehicles';
     

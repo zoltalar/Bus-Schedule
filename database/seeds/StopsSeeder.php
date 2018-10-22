@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 class StopsSeeder extends Seeder
 {
     /**
-     * URL containing list of bus stops.
+     * Base URL containing list of stops.
      * 
      * @var string
      */
