@@ -7,4 +7,6 @@ class Route extends Base
     protected $table = 'routes';
     
     protected $guarded = ['id'];
+    
+    public $timestamps = false;
 }
