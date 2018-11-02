@@ -41,8 +41,6 @@ class RoutesSeeder extends Seeder
                         'vehicle_id' => $vehicle->id
                     ]);
                 }
-            
-                sleep(1);
             }
         }
     }
