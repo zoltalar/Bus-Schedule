@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Extensions\Str;
 use App\Models\Vehicle;
@@ -27,29 +27,74 @@ class SchedulesSeeder extends Seeder
             'times' => []
         ];
         
+        $headers = $this->detectHeaders($text);
+        $count = count($headers);
+        $i = reset($headers);
+        $header = key($headers);
+        $text = array_slice($text, $i);
+        
         $i = 0;
-        $words = ['przystanki', 'nz', 'godzina'];
+        $start = -1;
+        $hours = range(1, 23);
         
         foreach ($text as $item) {
+            if (is_numeric($item) && $start === -1) {
+                $hour = (int) $item;
+                
+                if (in_array($hour, $hours)) {
+                    $start = $i;
+                }
+            }
+            
+            if ($start !== -1) {
+                if (($i-$start)%$count === 0 && ! empty($item)) {
+                    $hour = (int) $item;
+                    $data['times'][$hour] = [];
+                } else {
+                    
+                }
+            }
+            
             $i++;
-            
-            if (in_array(strtolower($item), $words)) {
-                continue;
-            }
-            
-            if (is_numeric($item)) {
-                $data['times'][] = $item;
-            }
         }
         
         return $data;
+    }
+    
+    /**
+     * Detect schedule header location.
+     * 
+     * @param array $text
+     * @return array
+     */
+    protected function detectHeaders(array $text) 
+    {
+        $headers = [
+            'Godzina' => -1,
+            'Dzień powszedni' => -1,
+            'Soboty' => -1,
+            'Święta' => -1
+        ];
+        
+        $names = array_keys($headers);
+        $i = 0;
+        
+        foreach ($text as $item) {
+            if (in_array($item, $names)) {
+                $headers[$item] = $i;
+            }
+            
+            $i++;
+        }
+        
+        return $headers;
     }
     
     public function run()
     {
         $client = new Client();
         $crawler = $client->request('GET', $this->url);
-        $vehicles = Vehicle::findMany([1,2]);
+        $vehicles = Vehicle::findMany([25]);
         
         foreach ($vehicles as $vehicle) {
             $link = $crawler->selectLink($vehicle->name);
@@ -66,17 +111,10 @@ class SchedulesSeeder extends Seeder
                         
                         return null;
                     });
-                    
-                $text = collect($text)
-                    ->reject(function($value, $key) {
-                        return empty($value);
-                    })
-                    ->values()
-                    ->all();
-                        
+                   
                 $data = $this->process($text);
                 
-                print_r($text);
+                print_r($data);
             }
         }
     }
