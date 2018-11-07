@@ -24,7 +24,17 @@ class SchedulesSeeder extends Seeder
     {
         $data = [
             'stop' => null,
-            'times' => []
+            'times' => [
+                'weekdays' => [],
+                'saturdays' => [],
+                'holidays' => []
+            ]
+        ];
+        
+        $map = [
+            'weekdays' => 1,
+            'saturdays' => 2,
+            'holidays' => 3
         ];
         
         $headers = $this->detectHeaders($text);
@@ -38,6 +48,10 @@ class SchedulesSeeder extends Seeder
         $hours = range(1, 23);
         
         foreach ($text as $item) {
+            if (strpos($item, 'Pabijan Grzegorz') !== false) {
+                break;
+            }
+            
             if (is_numeric($item) && $start === -1) {
                 $hour = (int) $item;
                 
@@ -47,11 +61,39 @@ class SchedulesSeeder extends Seeder
             }
             
             if ($start !== -1) {
-                if (($i-$start)%$count === 0 && ! empty($item)) {
+                $modulo = ($i-$start)%$count;
+                
+                if ($modulo === 0 && ! empty($item)) {
                     $hour = (int) $item;
-                    $data['times'][$hour] = [];
-                } else {
                     
+                    $data['times']['weekdays'][$hour] = [];
+                    $data['times']['saturdays'][$hour] = [];
+                    $data['times']['holidays'][$hour] = [];            
+                } elseif ( ! empty($item)) {
+                    if (strpos($item, ' ') !== false) {
+                        $minutes = explode(' ', $item);
+                    } else {
+                        $minutes = [$item];
+                    }
+                    
+                    $key = null;
+                    
+                    foreach ($map as $_key => $value) {
+                        if ($modulo === $value) {
+                            $key = $_key;
+                            break;
+                        }
+                    }
+                    
+                    if ($key !== null) {
+                        end($data['times'][$key]);
+                        $hour = key($data['times'][$key]);
+
+                        foreach ($minutes as $minute) {
+                            $minute = (int) $minute;                        
+                            $data['times'][$key][$hour][] = $minute;
+                        }
+                    }
                 }
             }
             
@@ -94,7 +136,7 @@ class SchedulesSeeder extends Seeder
     {
         $client = new Client();
         $crawler = $client->request('GET', $this->url);
-        $vehicles = Vehicle::findMany([25]);
+        $vehicles = Vehicle::findMany(range(0,2));
         
         foreach ($vehicles as $vehicle) {
             $link = $crawler->selectLink($vehicle->name);
