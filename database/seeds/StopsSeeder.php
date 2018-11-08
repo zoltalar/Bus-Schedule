@@ -31,11 +31,9 @@ class StopsSeeder extends Seeder
             parse_str($query, $args);
             
             if (isset($args['przystanek']) && ! empty($args['przystanek'])) {
-                $uid = trim($args['przystanek']);
                 $name = trim($node->text());
                 
                 Stop::firstOrCreate([
-                    'uid' => $uid,
                     'name' => $name
                 ]);
             }

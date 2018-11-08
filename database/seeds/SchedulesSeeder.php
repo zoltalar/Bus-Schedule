@@ -1,7 +1,11 @@
 ﻿<?php
 
 use App\Extensions\Str;
+use App\Models\Route;
+use App\Models\Schedule;
+use App\Models\Stop;
 use App\Models\Vehicle;
+use Carbon\Carbon;
 use Goutte\Client;
 use Illuminate\Database\Seeder;
 
@@ -15,7 +19,17 @@ class SchedulesSeeder extends Seeder
     protected $url = 'http://rozklady.mpk.krakow.pl';
     
     /**
-     * Process scraped text.
+     * Stops and routes cache.
+     * 
+     * @var array
+     */
+    protected $cache = [
+        'stops' => [],
+        'routes' => []
+    ];
+
+    /**
+     * Process scraped text to retrieve schedule times.
      * 
      * @param array $text
      * @return array
@@ -23,12 +37,9 @@ class SchedulesSeeder extends Seeder
     protected function process(array $text)
     {
         $data = [
-            'route' => $this->detectRoute($text),
-            'times' => [
-                'weekdays' => [],
-                'saturdays' => [],
-                'holidays' => []
-            ]
+            'weekdays' => [],
+            'saturdays' => [],
+            'holidays' => []
         ];
         
         $map = [
@@ -66,10 +77,12 @@ class SchedulesSeeder extends Seeder
                 if ($modulo === 0 && ! empty($item)) {
                     $hour = (int) $item;
                     
-                    $data['times']['weekdays'][$hour] = [];
-                    $data['times']['saturdays'][$hour] = [];
-                    $data['times']['holidays'][$hour] = [];            
+                    $data['weekdays'][$hour] = [];
+                    $data['saturdays'][$hour] = [];
+                    $data['holidays'][$hour] = [];            
                 } elseif ( ! empty($item)) {
+                    $minutes = [];
+                    
                     if (strpos($item, ' ') !== false) {
                         $minutes = explode(' ', $item);
                     } else {
@@ -86,12 +99,12 @@ class SchedulesSeeder extends Seeder
                     }
                     
                     if ($key !== null) {
-                        end($data['times'][$key]);
-                        $hour = key($data['times'][$key]);
+                        end($data[$key]);
+                        $hour = key($data[$key]);
 
                         foreach ($minutes as $minute) {
                             $minute = (int) $minute;                        
-                            $data['times'][$key][$hour][] = $minute;
+                            $data[$key][$hour][] = $minute;
                         }
                     }
                 }
@@ -133,25 +146,74 @@ class SchedulesSeeder extends Seeder
     }
     
     /**
+     * Detect stop name.
+     * 
+     * @param array $text
+     * @return string|null
+     */
+    protected function detectStop(array $text, $check = false)
+    {
+        $name = null;
+        
+        $words = [
+            'Przystanki',
+            'NZ',
+            'Godzina',
+            'Dzień powszedni',
+            'Soboty',
+            'Święta'
+        ];
+        
+        foreach ($text as $item) {
+            if (in_array($item, $words)) {
+                continue;
+            }
+            if (starts_with($item, 'Trasa:')) {
+                continue;
+            }
+            if (strpos($item, 'Pabijan Grzegorz') !== false) {
+                continue;
+            }
+            if ( ! empty($item) && ! is_numeric($item)) {
+                $name = $item;
+                
+                if ($check) {
+                    $stop = Stop::where('name', $name)->first();
+                    
+                    if ($stop !== null) {
+                        break;
+                    } else {
+                        continue;
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+        
+        return $name;
+    }
+
+    /**
      * Detect route name.
      * 
      * @param array $text
-     * @param string
+     * @param string|null
      */
     protected function detectRoute(array $text)
     {
-        $route = null;
+        $name = null;
         
         foreach ($text as $item) {
             if (starts_with($item, 'Trasa:')) {
-                $route = str_replace('Trasa:', '', $item);
-                $route = trim(strip_tags($route));
+                $name = str_replace('Trasa:', '', $item);
+                $name = trim(strip_tags($name));
                 
                 break;
             }
         }
         
-        return $route;
+        return $name;
     }
     
     public function run()
@@ -179,6 +241,57 @@ class SchedulesSeeder extends Seeder
                     });
                    
                 $data = $this->process($text);
+                $stopName = $this->detectStop($text);
+                $routeName = $this->detectRoute($text);
+                
+                if (count($data['weekdays']) > 0) {
+                    for ($i=1; $i<=5; $i++) {
+                        foreach ($data['weekdays'] as $hour => $minutes) {                            
+                            foreach ($minutes as $minute) {
+                                $dt = Carbon::create(null, null, null, $hour, $minute);
+                                
+                                $stopId = null;
+                                $routeId = null;
+                                
+                                if ( ! array_key_exists($stopName, $this->cache['stops'])) {
+                                    $stop = Stop::where('name', $stopName)->first();
+                                    
+                                    if ($stop !== null) {
+                                        $this->cache['stops'][$stopName] = $stop->id;
+                                    }
+                                }
+                                
+                                if (array_key_exists($stopName, $this->cache['stops'])) {
+                                    $stopId = $this->cache['stops'][$stopName];
+                                }
+                                
+                                if ( ! array_key_exists($routeName, $this->cache['routes'])) {
+                                    $route = Route::where('name', $routeName)->first();
+                                    
+                                    if ($route !== null) {
+                                        $this->cache['routes'][$routeName] = $route->id;
+                                    }
+                                }
+                                
+                                if (array_key_exists($routeName, $this->cache['routes'])) {
+                                    $routeId = $this->cache['routes'][$routeName];
+                                }
+                                
+                                if ($stopId !== null && $routeId !== null) {
+                                    $schedule = [
+                                        'vehicle_id' => $vehicle->id,
+                                        'stop_id' => $stopId,
+                                        'route_id' => $routeId,
+                                        'day' => $i,
+                                        'time' => $dt->toTimeString()
+                                    ];
+
+                                    Schedule::create($schedule);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

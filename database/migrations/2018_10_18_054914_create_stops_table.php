@@ -10,7 +10,6 @@ class CreateStopsTable extends Migration
     {
         Schema::create('stops', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('uid', 100)->unique();
             $table->string('name', 100)->unique();
             $table->timestamps();
         });

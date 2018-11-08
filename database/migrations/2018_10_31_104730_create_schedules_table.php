@@ -6,11 +6,6 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateSchedulesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('schedules', function (Blueprint $table) {
@@ -18,7 +13,7 @@ class CreateSchedulesTable extends Migration
             $table->integer('vehicle_id')->unsigned();
             $table->integer('stop_id')->unsigned();
             $table->integer('route_id')->unsigned();
-            $table->tinyInt('day')->unsigned();
+            $table->tinyInteger('day')->unsigned();
             $table->time('time');
             
             $table
@@ -41,11 +36,6 @@ class CreateSchedulesTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('schedules');
