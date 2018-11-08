@@ -220,7 +220,7 @@ class SchedulesSeeder extends Seeder
     {
         $client = new Client();
         $crawler = $client->request('GET', $this->url);
-        $vehicles = Vehicle::findMany([25]);
+        $vehicles = Vehicle::all();
         
         foreach ($vehicles as $vehicle) {
             $link = $crawler->selectLink($vehicle->name);
@@ -286,7 +286,7 @@ class SchedulesSeeder extends Seeder
                                         'time' => $dt->toTimeString()
                                     ];
 
-                                    Schedule::create($schedule);
+                                    Schedule::firstOrCreate($schedule);
                                 }
                             }
                         }

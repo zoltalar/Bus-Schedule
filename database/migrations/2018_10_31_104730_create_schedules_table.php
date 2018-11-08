@@ -16,6 +16,14 @@ class CreateSchedulesTable extends Migration
             $table->tinyInteger('day')->unsigned();
             $table->time('time');
             
+            $table->unique([
+                'vehicle_id',
+                'stop_id',
+                'route_id',
+                'day',
+                'time'
+            ]);
+            
             $table
                 ->foreign('vehicle_id')
                 ->references('id')
