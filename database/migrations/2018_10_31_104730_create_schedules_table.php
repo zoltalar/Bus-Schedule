@@ -18,6 +18,7 @@ class CreateSchedulesTable extends Migration
             $table->integer('vehicle_id')->unsigned();
             $table->integer('stop_id')->unsigned();
             $table->integer('route_id')->unsigned();
+            $table->tinyInt('day')->unsigned();
             $table->time('time');
             
             $table

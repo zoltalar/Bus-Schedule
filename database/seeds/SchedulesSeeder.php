@@ -23,7 +23,7 @@ class SchedulesSeeder extends Seeder
     protected function process(array $text)
     {
         $data = [
-            'stop' => null,
+            'route' => $this->detectRoute($text),
             'times' => [
                 'weekdays' => [],
                 'saturdays' => [],
@@ -132,11 +132,33 @@ class SchedulesSeeder extends Seeder
         return $headers;
     }
     
+    /**
+     * Detect route name.
+     * 
+     * @param array $text
+     * @param string
+     */
+    protected function detectRoute(array $text)
+    {
+        $route = null;
+        
+        foreach ($text as $item) {
+            if (starts_with($item, 'Trasa:')) {
+                $route = str_replace('Trasa:', '', $item);
+                $route = trim(strip_tags($route));
+                
+                break;
+            }
+        }
+        
+        return $route;
+    }
+    
     public function run()
     {
         $client = new Client();
         $crawler = $client->request('GET', $this->url);
-        $vehicles = Vehicle::findMany(range(0,2));
+        $vehicles = Vehicle::findMany([25]);
         
         foreach ($vehicles as $vehicle) {
             $link = $crawler->selectLink($vehicle->name);
@@ -147,16 +169,16 @@ class SchedulesSeeder extends Seeder
                 $text = $click
                     ->filter('td')
                     ->each(function($node) {
-                        if ( ! Str::isHtml($node->html())) {
-                            return trim($node->text());
+                        $text = trim($node->text());
+                        
+                        if ( ! Str::isHtml($node->html()) || starts_with($text, 'Trasa:')) {
+                            return $text;
                         }
                         
                         return null;
                     });
                    
                 $data = $this->process($text);
-                
-                print_r($data);
             }
         }
     }
