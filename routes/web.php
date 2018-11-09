@@ -12,3 +12,4 @@
 */
 
 Route::get('/', 'AppController@index');
+Route::get('/stops', 'StopsController@index');
