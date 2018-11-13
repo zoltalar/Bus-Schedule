@@ -8,6 +8,6 @@ class StopsController extends Controller
 {
     public function index()
     {
-        return response()->json(Stop::all());
+        return response()->json(Stop::limit(10)->get());
     }
 }
