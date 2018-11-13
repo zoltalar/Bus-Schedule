@@ -1,6 +1,6 @@
 <template>
     <div id="stops">
-        <div class="spinner" v-show="loaded === false">
+        <div class="spinner" v-show="loaded === false || busy === true">
             <i class="fas fa-sync fa-spin"></i>
         </div>
         <form>
@@ -9,7 +9,8 @@
             </div>
         </form>
         <div class="list-group" v-show="loaded === true">
-            <a href="#" class="list-group-item" v-for="stop in stops">{{ stop.name }}</a>
+            <a href="#" class="list-group-item" v-for="stop in stops" @click="setStop(stop)" :class="{'active': currentStop.id == stop.id}">{{ stop.name }}</a>
+            <small class="text-muted" v-show="(stops.length === 0 && loaded === true && busy === false)">...</small>
         </div>
     </div>
 </template>
@@ -22,6 +23,10 @@
                 busy: false,
                 phrase: '',
                 stops: [],
+                currentStop: {
+                    id: null,
+                    name: null
+                },
                 timer: null
             }
         },
@@ -49,6 +54,16 @@
                             that.stops = response.data
                         })
                 }, 250)
+            },
+            setStop(stop) {
+                if (this.currentStop.id === stop.id) {
+                    this.currentStop = {
+                        id: null,
+                        name: null
+                    }
+                } else {
+                    this.currentStop = stop
+                }
             }
         },
         mounted() {

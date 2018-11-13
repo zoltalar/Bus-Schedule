@@ -47422,6 +47422,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'stop-list',
@@ -47431,6 +47432,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             busy: false,
             phrase: '',
             stops: [],
+            currentStop: {
+                id: null,
+                name: null
+            },
             timer: null
         };
     },
@@ -47459,6 +47464,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     that.stops = response.data;
                 });
             }, 250);
+        },
+        setStop: function setStop(stop) {
+            if (this.currentStop.id === stop.id) {
+                this.currentStop = {
+                    id: null,
+                    name: null
+                };
+            } else {
+                this.currentStop = stop;
+            }
         }
     },
     mounted: function mounted() {
@@ -47482,8 +47497,8 @@ var render = function() {
           {
             name: "show",
             rawName: "v-show",
-            value: _vm.loaded === false,
-            expression: "loaded === false"
+            value: _vm.loaded === false || _vm.busy === true,
+            expression: "loaded === false || busy === true"
           }
         ],
         staticClass: "spinner"
@@ -47535,13 +47550,45 @@ var render = function() {
         ],
         staticClass: "list-group"
       },
-      _vm._l(_vm.stops, function(stop) {
-        return _c(
-          "a",
-          { staticClass: "list-group-item", attrs: { href: "#" } },
-          [_vm._v(_vm._s(stop.name))]
+      [
+        _vm._l(_vm.stops, function(stop) {
+          return _c(
+            "a",
+            {
+              staticClass: "list-group-item",
+              class: { active: _vm.currentStop.id == stop.id },
+              attrs: { href: "#" },
+              on: {
+                click: function($event) {
+                  _vm.setStop(stop)
+                }
+              }
+            },
+            [_vm._v(_vm._s(stop.name))]
+          )
+        }),
+        _vm._v(" "),
+        _c(
+          "small",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value:
+                  _vm.stops.length === 0 &&
+                  _vm.loaded === true &&
+                  _vm.busy === false,
+                expression:
+                  "(stops.length === 0 && loaded === true && busy === false)"
+              }
+            ],
+            staticClass: "text-muted"
+          },
+          [_vm._v("...")]
         )
-      })
+      ],
+      2
     )
   ])
 }
