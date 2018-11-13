@@ -3,3 +3,18 @@
 // --------------------------------------------------
 
 @import "~bootstrap/scss/bootstrap";
+
+
+// --------------------------------------------------
+// Page Components
+// --------------------------------------------------
+
+#stops {
+    position: relative;
+    
+    .spinner {
+        position: absolute;
+        right: 10px;
+        top: 7px;
+    }
+}

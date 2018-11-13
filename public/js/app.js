@@ -47415,11 +47415,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'stop-list',
     data: function data() {
         return {
+            loading: true,
             stops: []
         };
     },
@@ -47429,6 +47437,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var that = this;
             setTimeout(function () {
                 axios.get('/stops').then(function (response) {
+                    that.loading = false;
                     that.stops = response.data;
                 });
             }, 2000);
@@ -47447,12 +47456,49 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("i", { staticClass: "fas fa-circle-notch" }),
+  return _c("div", { attrs: { id: "stops" } }, [
+    _c(
+      "div",
+      {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.loading === true,
+            expression: "loading === true"
+          }
+        ],
+        staticClass: "spinner"
+      },
+      [_c("i", { staticClass: "fas fa-sync fa-spin" })]
+    ),
+    _vm._v(" "),
+    _c("form", [
+      _c("div", { staticClass: "form-group" }, [
+        _c("input", {
+          staticClass: "form-control",
+          attrs: {
+            type: "text",
+            placeholder: "Search...",
+            disabled: _vm.loading === true
+          }
+        })
+      ])
+    ]),
     _vm._v(" "),
     _c(
       "div",
-      { staticClass: "list-group" },
+      {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.loading === false,
+            expression: "loading === false"
+          }
+        ],
+        staticClass: "list-group"
+      },
       _vm._l(_vm.stops, function(stop) {
         return _c(
           "a",

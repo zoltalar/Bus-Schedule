@@ -10466,3 +10466,13 @@ a.text-dark:focus {
   }
 }
 
+#stops {
+  position: relative;
+}
+
+#stops .spinner {
+  position: absolute;
+  right: 10px;
+  top: 7px;
+}
+
