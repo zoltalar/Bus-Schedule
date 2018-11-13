@@ -47427,20 +47427,38 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     name: 'stop-list',
     data: function data() {
         return {
-            loading: true,
-            stops: []
+            loaded: false,
+            busy: false,
+            phrase: '',
+            stops: [],
+            timer: null
         };
     },
 
     methods: {
         load: function load() {
-            var that = this;
-            setTimeout(function () {
-                axios.get('/stops').then(function (response) {
-                    that.loading = false;
+            this.search();
+            this.loaded = true;
+        },
+        search: function search() {
+            var _this = this;
+
+            this.busy = true;
+            this.stops = [];
+
+            if (this.timer) {
+                clearTimeout(this.timer);
+                this.timer = null;
+            }
+
+            this.timer = setTimeout(function () {
+                var that = _this;
+
+                axios.get('/stops?phrase=' + _this.phrase).then(function (response) {
+                    that.busy = false;
                     that.stops = response.data;
                 });
-            }, 2000);
+            }, 250);
         }
     },
     mounted: function mounted() {
@@ -47464,8 +47482,8 @@ var render = function() {
           {
             name: "show",
             rawName: "v-show",
-            value: _vm.loading === true,
-            expression: "loading === true"
+            value: _vm.loaded === false,
+            expression: "loaded === false"
           }
         ],
         staticClass: "spinner"
@@ -47476,11 +47494,29 @@ var render = function() {
     _c("form", [
       _c("div", { staticClass: "form-group" }, [
         _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.phrase,
+              expression: "phrase"
+            }
+          ],
           staticClass: "form-control",
           attrs: {
             type: "text",
             placeholder: "Search...",
-            disabled: _vm.loading === true
+            disabled: _vm.loaded === false
+          },
+          domProps: { value: _vm.phrase },
+          on: {
+            keyup: _vm.search,
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.phrase = $event.target.value
+            }
           }
         })
       ])
@@ -47493,8 +47529,8 @@ var render = function() {
           {
             name: "show",
             rawName: "v-show",
-            value: _vm.loading === false,
-            expression: "loading === false"
+            value: _vm.loaded === true,
+            expression: "loaded === true"
           }
         ],
         staticClass: "list-group"
