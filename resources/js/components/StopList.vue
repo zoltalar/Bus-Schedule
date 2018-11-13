@@ -9,7 +9,7 @@
             </div>
         </form>
         <div class="list-group" v-show="loaded === true">
-            <a href="#" class="list-group-item" v-for="stop in stops" @click="setStop(stop)" :class="{'active': currentStop.id == stop.id}">{{ stop.name }}</a>
+            <a href="#" class="list-group-item" v-for="stop in stops" @click="setStop(stop)" :class="{'active': (selectedStop.id == stop.id)}">{{ stop.name }}</a>
             <small class="text-muted" v-show="(stops.length === 0 && loaded === true && busy === false)">...</small>
         </div>
     </div>
@@ -23,7 +23,7 @@
                 busy: false,
                 phrase: '',
                 stops: [],
-                currentStop: {
+                selectedStop: {
                     id: null,
                     name: null
                 },
@@ -56,13 +56,13 @@
                 }, 250)
             },
             setStop(stop) {
-                if (this.currentStop.id === stop.id) {
-                    this.currentStop = {
+                if (this.selectedStop.id === stop.id) {
+                    this.selectedStop = {
                         id: null,
                         name: null
                     }
                 } else {
-                    this.currentStop = stop
+                    this.selectedStop = stop
                 }
             }
         },

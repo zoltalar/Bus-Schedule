@@ -47432,7 +47432,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             busy: false,
             phrase: '',
             stops: [],
-            currentStop: {
+            selectedStop: {
                 id: null,
                 name: null
             },
@@ -47466,13 +47466,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }, 250);
         },
         setStop: function setStop(stop) {
-            if (this.currentStop.id === stop.id) {
-                this.currentStop = {
+            if (this.selectedStop.id === stop.id) {
+                this.selectedStop = {
                     id: null,
                     name: null
                 };
             } else {
-                this.currentStop = stop;
+                this.selectedStop = stop;
             }
         }
     },
@@ -47556,7 +47556,7 @@ var render = function() {
             "a",
             {
               staticClass: "list-group-item",
-              class: { active: _vm.currentStop.id == stop.id },
+              class: { active: _vm.selectedStop.id == stop.id },
               attrs: { href: "#" },
               on: {
                 click: function($event) {
