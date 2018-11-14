@@ -4,6 +4,7 @@ window.Vue = require('vue')
 window.axios = require('axios')
 
 Vue.component('app', require('./components/app'))
+Vue.component('stop', require('./components/stop'))
 Vue.component('stop-list', require('./components/stop-list'))
 
 import store from './store'
