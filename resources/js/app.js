@@ -1,12 +1,15 @@
-require('./bootstrap');
+require('./bootstrap')
 
 window.Vue = require('vue')
 window.axios = require('axios')
 
-Vue.component('App', require('./components/App'))
-Vue.component('StopList', require('./components/StopList'))
+Vue.component('app', require('./components/app'))
+Vue.component('stop-list', require('./components/stop-list'))
+
+import store from './store'
 
 const app = new Vue({
     el: '#root',
+    store,
     template: '<app></app>'
 })

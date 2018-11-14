@@ -57,12 +57,15 @@
             },
             setStop(stop) {
                 if (this.selectedStop.id === stop.id) {
-                    this.selectedStop = {
+                    let selectedStop = {
                         id: null,
                         name: null
                     }
+                    this.selectedStop = selectedStop
+                    this.$store.dispatch('setStop', selectedStop)
                 } else {
                     this.selectedStop = stop
+                    this.$store.dispatch('setStop', stop)
                 }
             }
         },
