@@ -2,13 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/xampp/htdocs/bus/resources/js/app.js</file>
-            <file>file:/C:/xampp/htdocs/bus/resources/js/store/index.js</file>
-            <file>file:/C:/xampp/htdocs/bus/resources/js/components/stop-list.vue</file>
-            <file>file:/C:/xampp/htdocs/bus/resources/js/store/modules/storage.js</file>
-            <file>file:/C:/xampp/htdocs/bus/resources/views/app.blade.php</file>
-            <file>file:/C:/xampp/htdocs/bus/resources/js/components/app.vue</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

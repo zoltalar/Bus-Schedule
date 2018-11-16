@@ -10,17 +10,16 @@
             return {
                 name: ''
             }
+        },        
+        computed: {
+            selectedStop() {
+                return this.$store.getters.stop
+            }
         },
-        created() {
-            this.$store.watch(
-                (state) => {
-                    return this.$store.state.stop
-                },
-                (newValue, oldValue)=>{
-                  console.log(oldValue)
-                  console.log(newValue)
-                }
-            )
+        watch: {
+            'selectedStop.name': function(newVal, oldVal) {
+                this.name = newVal
+            }
         }
     }
 </script>
