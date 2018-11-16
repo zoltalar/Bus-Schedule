@@ -24982,6 +24982,12 @@ Vue.component('stop', __webpack_require__(42));
 Vue.component('stop-list', __webpack_require__(45));
 Vue.component('timer', __webpack_require__(48));
 
+Vue.filter('capitalize', function (value) {
+    if (!value) return '';
+    value = value.toString();
+    return value.charAt(0).toUpperCase() + value.slice(1);
+});
+
 
 
 var app = new Vue({
@@ -47445,6 +47451,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'stop',
@@ -47505,7 +47513,7 @@ var render = function() {
             expression: "schedules.length > 0"
           }
         ],
-        staticClass: "table"
+        staticClass: "table table-bordered table-hover"
       },
       [
         _vm._m(0),
@@ -47516,6 +47524,10 @@ var render = function() {
             return _c("tr", [
               _c("td", { attrs: { width: "20%" } }, [
                 _vm._v(_vm._s(schedule.vehicle.name))
+              ]),
+              _vm._v(" "),
+              _c("td", [
+                _vm._v(_vm._s(_vm._f("capitalize")(schedule.vehicle.type)))
               ]),
               _vm._v(" "),
               _c("td", [_vm._v(_vm._s(schedule.time))])
@@ -47549,6 +47561,8 @@ var staticRenderFns = [
     return _c("thead", [
       _c("tr", [
         _c("th", [_vm._v("Vehicle")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Vehicle Type")]),
         _vm._v(" "),
         _c("th", [_vm._v("Time")])
       ])

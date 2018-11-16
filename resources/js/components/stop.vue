@@ -1,16 +1,18 @@
 <template>
     <div id="stop">
         <h5 class="mb-4">{{ name }}</h5>
-        <table class="table" v-show="schedules.length > 0">
+        <table class="table table-bordered table-hover" v-show="schedules.length > 0">
             <thead>
                 <tr>
                     <th>Vehicle</th>
+                    <th>Vehicle Type</th>
                     <th>Time</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="schedule in schedules">
                     <td width="20%">{{ schedule.vehicle.name }}</td>
+                    <td>{{ schedule.vehicle.type | capitalize }}</td>
                     <td>{{ schedule.time }}</td>
                 </tr>
             </tbody>
