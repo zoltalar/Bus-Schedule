@@ -15,7 +15,7 @@ class SchedulesController extends Controller
             ->where('day', date('w'))
             ->whereBetween('time', [
                 (new Carbon())->toTimeString(), 
-                (new Carbon())->addMinute(10)->toTimeString()
+                (new Carbon())->addHour()->toTimeString()
             ])
             ->limit(5)
             ->get();

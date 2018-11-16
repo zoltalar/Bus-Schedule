@@ -47430,21 +47430,53 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: 'stop',
     data: function data() {
         return {
-            name: ''
+            name: '',
+            schedules: []
         };
     },
 
+    methods: {
+        loadSchedules: function loadSchedules(id) {
+            var _this = this;
+
+            if (id === null) {
+                this.schedules = [];
+            } else {
+                axios.get('/schedules/closest/' + id).then(function (response) {
+                    _this.schedules = response.data;
+                });
+            }
+        }
+    },
     computed: {
         selectedStop: function selectedStop() {
             return this.$store.getters.stop;
         }
     },
     watch: {
+        'selectedStop.id': function selectedStopId(newVal, oldVal) {
+            this.loadSchedules(newVal);
+        },
         'selectedStop.name': function selectedStopName(newVal, oldVal) {
             this.name = newVal;
         }
@@ -47460,10 +47492,69 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { attrs: { id: "stop" } }, [
-    _c("h5", [_vm._v(_vm._s(_vm.name))])
+    _c("h5", { staticClass: "mb-4" }, [_vm._v(_vm._s(_vm.name))]),
+    _vm._v(" "),
+    _c(
+      "table",
+      {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.schedules.length > 0,
+            expression: "schedules.length > 0"
+          }
+        ],
+        staticClass: "table"
+      },
+      [
+        _vm._m(0),
+        _vm._v(" "),
+        _c(
+          "tbody",
+          _vm._l(_vm.schedules, function(schedule) {
+            return _c("tr", [
+              _c("td", { attrs: { width: "20%" } }, [
+                _vm._v(_vm._s(schedule.vehicle.name))
+              ]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(schedule.time))])
+            ])
+          })
+        )
+      ]
+    ),
+    _vm._v(" "),
+    _c(
+      "p",
+      {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.selectedStop.id !== null && _vm.schedules.length == 0,
+            expression: "selectedStop.id !== null && schedules.length == 0"
+          }
+        ]
+      },
+      [_vm._v("No schedules to show in next hour.")]
+    )
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Vehicle")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Time")])
+      ])
+    ])
+  }
+]
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
@@ -47586,16 +47677,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         setStop: function setStop(stop) {
             if (this.selectedStop.id === stop.id) {
-                var selectedStop = {
+                stop = {
                     id: null,
                     name: null
                 };
-                this.selectedStop = selectedStop;
-                this.$store.dispatch('setStop', selectedStop);
-            } else {
-                this.selectedStop = stop;
-                this.$store.dispatch('setStop', stop);
             }
+
+            this.selectedStop = stop;
+            this.$store.dispatch('setStop', stop);
         }
     },
     mounted: function mounted() {
