@@ -1,6 +1,7 @@
 <template>
     <div id="stop">
         <h5>{{ name }}</h5>
+        <stop-route></stop-route>
     </div>
 </template>
 <script>

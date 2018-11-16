@@ -13,3 +13,4 @@
 
 Route::get('/', 'AppController@index');
 Route::get('/stops', 'StopsController@index');
+Route::get('/schedules/closest/{id}', 'SchedulesController@closest');
