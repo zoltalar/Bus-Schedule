@@ -18,6 +18,7 @@ class SchedulesController extends Controller
                 (new Carbon())->addHour()->toTimeString()
             ])
             ->limit(5)
+            ->orderBy('time', 'asc')
             ->get();
         
         return response()->json($schedules);
