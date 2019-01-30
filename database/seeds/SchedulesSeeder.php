@@ -198,7 +198,7 @@ class SchedulesSeeder extends Seeder
      * Detect route name.
      * 
      * @param array $text
-     * @param string|null
+     * @return string|null
      */
     protected function detectRoute(array $text)
     {

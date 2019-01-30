@@ -19,7 +19,7 @@ class VehiclesSeeder extends Seeder
      * 
      * @link http://rozklady.mpk.krakow.pl
      * 
-     * @var array
+     * @return array
      */
     protected function trams()
     {
